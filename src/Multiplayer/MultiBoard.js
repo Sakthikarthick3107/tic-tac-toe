@@ -120,7 +120,7 @@ const MultiBoard = () => {
         <StyleBox>
             <Stack direction='column' spacing={2}>
                 <Typography variant='h2' >{winner} Wins</Typography>
-                <Button variant='contained' onClick={playNextMatch}>Next Match</Button>
+                <Button color='error' variant='contained' onClick={playNextMatch}>Next Match</Button>
             </Stack>
             
         </StyleBox>}
