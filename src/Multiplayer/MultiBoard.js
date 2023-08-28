@@ -1,4 +1,4 @@
-import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Stack, TextField, Typography } from '@mui/material'
+import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle,  Stack, TextField, Typography } from '@mui/material'
 import React, {  useEffect, useState } from 'react'
 import StyleBox from '../styles/StyleBox'
 import MultiSquares from './MultiSquares'
@@ -14,6 +14,7 @@ const MultiBoard = () => {
     const[winner , setWinner] = useState(null)
     const[XWins , setXWins] = useState(0)
     const[OWins , setOWins] = useState(0)
+    const[draw , setDraw] = useState(false)
     const[matchFinish , setMatchFinish] = useState(false)
 
     const closeMenu = (e) =>{
@@ -49,12 +50,24 @@ const MultiBoard = () => {
                     setOWins((p) => p+1)
                     clearInterval(interval)
                 }
-                
             }       
         }
         },30);
         return () => clearInterval(interval)
     },[player1,player2,val])
+
+    useEffect(() =>{
+        const interval = setInterval(()=>{
+            for(let i = 0 ; i < 9 ; i++){
+                if(val[i] === null){
+                    setDraw(false);
+                    break;
+                }
+                setDraw(true);
+            }
+        },30);
+        return ()=> clearInterval(interval);
+    })
 
     const setGame = (e) =>{
         if(val[e] === null && winner === null){
@@ -76,6 +89,7 @@ const MultiBoard = () => {
         const copy = Array(val.length).fill(null)
         setVal(copy)
         setXTurn(true)
+        setDraw(false)
     }
     
   return (
@@ -134,9 +148,15 @@ const MultiBoard = () => {
                 <Typography variant='h2' >{winner} Wins</Typography>
                 <Button color='error' variant='contained' onClick={playNextMatch}>Next Match</Button>
             </Stack>
-        
-            
         </StyleBox>}
+        {draw &&
+            <StyleBox>
+                <Stack direction='column' spacing={2}>
+                    <Typography variant='h2' >Match Draw!</Typography>
+                    <Button color='error' variant='contained' onClick={playNextMatch}>Re-Match</Button>
+                </Stack>
+            </StyleBox>
+        }
         
 
         <Dialog open={playerInfoDialog} onClose={()=>closeMenu}>
