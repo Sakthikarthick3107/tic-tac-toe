@@ -1,10 +1,11 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Stack, TextField, Typography } from '@mui/material'
-import React, {  useState } from 'react'
+import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Stack, TextField, Typography } from '@mui/material'
+import React, {  useEffect, useState } from 'react'
 import StyleBox from '../styles/StyleBox'
 import MultiSquares from './MultiSquares'
 
-const MultiBoard = () => {
 
+const MultiBoard = () => {
+  
     const[player1 , setPlayer1] = useState('')
     const[player2 , setPlayer2] = useState('')
     const[playerInfoDialog , setPlayerInfoDialog] = useState(true)
@@ -20,43 +21,53 @@ const MultiBoard = () => {
         console.log(player1 ,  player2)
         setPlayerInfoDialog(!playerInfoDialog)
     }
-    const winningLogic = [
-            [0 , 1 , 2],
-            [3 , 4 , 5],
-            [6 , 7 , 8],
-            [0 , 3 , 6],
-            [1 , 4 , 7],
-            [2 , 5 , 8],
-            [0 , 4 , 8],
-            [2 , 4 , 6]
-        ]
+    
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const winningLogic = [
+                [0 , 1 , 2],
+                [3 , 4 , 5],
+                [6 , 7 , 8],
+                [0 , 3 , 6],
+                [1 , 4 , 7],
+                [2 , 5 , 8],
+                [0 , 4 , 8],
+                [2 , 4 , 6]
+            ]
+        for(let logic of winningLogic){
+            let [a , b , c] = logic
+            if(val[a] !==null && val[a] === val[b] && val[a] === val[c]){
+                setMatchFinish(true)
+                if(val[a] === 'X'){
+                    setWinner(player1)
+                    setXWins((p) => p+1)
+                    clearInterval(interval)
+                }
+                else{
+                    setWinner(player2)
+                    setOWins((p) => p+1)
+                    clearInterval(interval)
+                }
+                
+            }       
+        }
+        },30);
+        return () => clearInterval(interval)
+    },[player1,player2,val])
 
     const setGame = (e) =>{
-        
         if(val[e] === null && winner === null){
             const copy = [...val]
             copy[e] = XTurn? 'X' : 'O'
             setVal(copy)
             setXTurn(!XTurn)
-            for(let logic of winningLogic){
-                let [a , b , c] = logic
-                if(val[a] !==null && val[a] === val[b] && val[a] === val[c]){
-                    setMatchFinish(true)
-                    if(val[a] === 'X'){
-                        setWinner(player1)
-                        setXWins((p) => p+1)
-                    }
-                    else{
-                        setWinner(player2)
-                        setOWins((p) => p+1)
-                    }
-                }       
-        }
         }
         
-        else{
+        else if(matchFinish){
             alert("Game is already ended")
         }
+        
 
     }
     const playNextMatch =() =>{
@@ -73,17 +84,8 @@ const MultiBoard = () => {
         <Typography variant='h2' m={8}>Multiplayer </Typography>
     </StyleBox>
     <Box>
-        <Grid container>
-            <Grid item lg={3}>
-                <StyleBox>
-                    <Stack direction='column' textAlign='center'>
-                        <Typography variant='h3'>{player2!=='' ? player1 : ''}</Typography>
-                        <Typography variant='h4'>{player2 !==''? XWins:''}</Typography>
-                    </Stack>
-                </StyleBox>
-            </Grid>
             
-            <Grid item lg={6}>
+            <Container  maxWidth='md'>
                 <StyleBox>
                     <MultiSquares value={val[0]} gameplay={()=>setGame(0)} endGame={matchFinish} />
                     <MultiSquares value={val[1]} gameplay={()=>setGame(1)} endGame={matchFinish}/>
@@ -101,17 +103,27 @@ const MultiBoard = () => {
                     <MultiSquares value={val[7]} gameplay={()=>setGame(7)} endGame={matchFinish}/>
                     <MultiSquares value={val[8]} gameplay={()=>setGame(8)} endGame={matchFinish}/>
                 </StyleBox>
-            </Grid>
-
-            <Grid item lg={3}>
+            </Container>
+            <br/>
+            {!playerInfoDialog &&
+            <Stack  direction='row' justifyContent='space-around'>
                 <StyleBox>
                     <Stack direction='column' textAlign='center'>
-                        <Typography variant='h3'>{player2}</Typography>
-                        <Typography variant='h4'>{player2 !==''? OWins:''}</Typography>
+                        <Typography variant='h4'>{player1}</Typography>
+                        <Typography variant='h6'>{XWins}</Typography>
                     </Stack>
                 </StyleBox>
-            </Grid>
-        </Grid>
+                <Typography variant='h3'>Vs</Typography>
+
+                <StyleBox>
+                    <Stack direction='column' textAlign='center'>
+                        <Typography variant='h4'>{player2}</Typography>
+                        <Typography variant='h6'>{OWins}</Typography>
+                    </Stack>
+                </StyleBox>
+
+            </Stack>}
+     
         
 
       </Box>
@@ -122,8 +134,10 @@ const MultiBoard = () => {
                 <Typography variant='h2' >{winner} Wins</Typography>
                 <Button color='error' variant='contained' onClick={playNextMatch}>Next Match</Button>
             </Stack>
+        
             
         </StyleBox>}
+        
 
         <Dialog open={playerInfoDialog} onClose={()=>closeMenu}>
             <DialogTitle>Player Details</DialogTitle>
