@@ -145,14 +145,14 @@ const MultiBoard = () => {
       {matchFinish &&
         <StyleBox>
             <Stack direction='column' spacing={2}>
-                <Typography variant='h2' >{winner} Wins</Typography>
+                <Typography variant='h3' >{winner} Wins</Typography>
                 <Button color='error' variant='contained' onClick={playNextMatch}>Next Match</Button>
             </Stack>
         </StyleBox>}
-        {draw &&
+        {draw && !winner &&
             <StyleBox>
                 <Stack direction='column' spacing={2}>
-                    <Typography variant='h2' >Match Draw!</Typography>
+                    <Typography variant='h3' >Match Draw!</Typography>
                     <Button color='error' variant='contained' onClick={playNextMatch}>Re-Match</Button>
                 </Stack>
             </StyleBox>
