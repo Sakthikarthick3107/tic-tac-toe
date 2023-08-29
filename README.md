@@ -1,1 +1,1 @@
-https://sakthikarthicks-tic-tac-toe.netlify.app/
+https://sakthikarthicks-tic-tac-toe.vercel.app/
